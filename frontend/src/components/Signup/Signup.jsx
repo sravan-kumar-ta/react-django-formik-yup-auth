@@ -2,6 +2,7 @@ import React from "react";
 import { Formik, Form } from "formik";
 import SignupValidationSchema from "../../utils/validationSchemas";
 import InputField from "../InputField/InputField";
+import SubmitButton from "../InputField/SubmitButton";
 
 const initialValues = {
    firstName: "",
@@ -12,8 +13,12 @@ const initialValues = {
    confirmPassword: "",
 };
 
-const handleSubmit = (values) => {
+const handleSubmit = (values, { setSubmitting, resetForm }) => {
    console.log("Form values", values);
+   setTimeout(() => {
+      setSubmitting(false);
+      resetForm();
+   }, 2000);
 };
 
 const Signup = () => {
@@ -24,8 +29,10 @@ const Signup = () => {
          onSubmit={handleSubmit}
       >
          {({ isSubmitting, touched, errors }) => (
-            <Form className="max-w-md mx-auto p-6 bg-white rounded shadow-md mt-10">
-               <div className="flex space-x-4 mb-4">
+            <Form className="max-w-md mx-auto p-6 pt-0 bg-white rounded shadow-md mt-10">
+               <h1 className="text-center text-2xl my-4 font-bold">SignUp</h1>
+               <hr />
+               <div className="flex space-x-4 mt-2">
                   <div className="w-1/2">
                      <InputField
                         name="firstName"
@@ -71,13 +78,7 @@ const Signup = () => {
                   errors={errors}
                />
                <div className="flex items-center justify-between">
-                  <button
-                     type="submit"
-                     disabled={isSubmitting}
-                     className="mx-auto w-2/4 bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >
-                     Sign Up
-                  </button>
+                  <SubmitButton isSubmitting={isSubmitting} />
                </div>
             </Form>
          )}
