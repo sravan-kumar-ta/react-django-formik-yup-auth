@@ -1,6 +1,6 @@
 import React from "react";
 
-const SubmitButton = ({ type = "submit", isSubmitting }) => {
+const SubmitButton = ({ type = "submit", text = "Submit", isSubmitting }) => {
    return (
       <button
          type={type}
@@ -29,7 +29,7 @@ const SubmitButton = ({ type = "submit", isSubmitting }) => {
                ></path>
             </svg>
          )}
-         {isSubmitting ? "Processing..." : "Sign Up"}
+         {isSubmitting ? "Processing..." : text}
       </button>
    );
 };
