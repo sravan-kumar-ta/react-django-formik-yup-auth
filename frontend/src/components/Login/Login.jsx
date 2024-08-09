@@ -3,23 +3,24 @@ import React from "react";
 import InputField from "../InputField/InputField";
 import SubmitButton from "../InputField/SubmitButton";
 import { loginValidationSchema } from "../../utils/validationSchemas";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
    const location = useLocation();
-   const username = location.state?.username;
+   const navigate = useNavigate();
+   const { loginUser } = useAuth();
+   const username = location.state?.username || "";
 
    const initialValues = {
       username: username,
       password: "",
    };
 
-   const handleSubmit = (values, { setSubmitting, resetForm }) => {
+   const handleSubmit = async (values) => {
       console.log("login values:", values);
-      setTimeout(() => {
-         setSubmitting(false);
-         resetForm();
-      }, 2000);
+
+      await loginUser(values.username, values.password);
    };
 
    return (
