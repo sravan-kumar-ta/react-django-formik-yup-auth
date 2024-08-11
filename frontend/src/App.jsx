@@ -5,6 +5,7 @@ import Login from "./components/Login/Login";
 import UserList from "./components/UserList/UserList";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import Home from "./components/Home/Home";
 
 function App() {
    return (
@@ -12,8 +13,9 @@ function App() {
          <AuthProvider>
             <Navbar />
             <Routes>
+               <Route path="/" element={<Home />} />
                <Route
-                  path="/"
+                  path="/users"
                   element={<ProtectedRoute element={<UserList />} />}
                />
                <Route path="/signup" element={<Signup />} />

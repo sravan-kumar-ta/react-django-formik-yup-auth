@@ -4,6 +4,7 @@ import { signupValidationSchema } from "../../utils/validationSchemas";
 import InputField from "../InputField/InputField";
 import SubmitButton from "../InputField/SubmitButton";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const initialValues = {
    firstName: "",
@@ -15,16 +16,34 @@ const initialValues = {
 };
 
 const Signup = () => {
+   const { signupUser } = useAuth();
    const navigate = useNavigate();
 
-   const handleSubmit = (values, { setSubmitting, resetForm }) => {
-      console.log("Form values", values);
-      setTimeout(() => {
-         setSubmitting(false);
+   const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {
+      const { status, data } = await signupUser({
+         first_name: values.firstName,
+         last_name: values.lastName,
+         username: values.username,
+         email: values.email,
+         password: values.password,
+      });
+   
+      if (status === "success") {
          resetForm();
          navigate("/login", { state: { username: values.username } });
-      }, 2000);
+      } else if (status === "error") {
+         if (typeof data === "object") {
+            Object.keys(data).forEach((field) => {
+               setFieldError(field, data[field][0]);
+            });
+         } else {
+            setFieldError("general", data);
+         }
+      }
+   
+      setSubmitting(false);
    };
+   
 
    return (
       <div className="bg-gray-100 min-h-screen">
@@ -91,6 +110,13 @@ const Signup = () => {
                            text="Signup"
                         />
                      </div>
+
+                     {/* Display general form error if exists */}
+                     {errors.general && (
+                        <div className="text-red-500 text-center mt-2">
+                           {errors.general}
+                        </div>
+                     )}
                   </Form>
                )}
             </Formik>

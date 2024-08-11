@@ -1,27 +1,46 @@
 import { Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "../InputField/InputField";
 import SubmitButton from "../InputField/SubmitButton";
 import { loginValidationSchema } from "../../utils/validationSchemas";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
    const location = useLocation();
-   const navigate = useNavigate();
    const { loginUser } = useAuth();
    const username = location.state?.username || "";
+   const [errorMessage, setErrorMessage] = useState("");
 
    const initialValues = {
       username: username,
       password: "",
    };
 
-   const handleSubmit = async (values) => {
-      console.log("login values:", values);
-
-      await loginUser(values.username, values.password);
+   const handleSubmit = async (values, { setSubmitting }) => {
+      try {
+         setErrorMessage(""); // Clear any previous error message
+         console.log("Submitting login request...");
+         await loginUser(values.username, values.password);
+         console.log("Login successful");
+      } catch (error) {
+         console.error("Login failed", error);
+         setErrorMessage(
+            "Login failed. Please check your credentials and try again."
+         );
+      } finally {
+         setSubmitting(false);
+         console.log("Submitting set to false");
+      }
    };
+
+   useEffect(() => {
+      if (username) {
+         document.getElementsByName("password")[0].focus();
+      } else {
+         document.getElementsByName("username")[0].focus();
+      }
+   }, [username]);
 
    return (
       <div className="bg-gray-100 min-h-screen">
@@ -50,6 +69,13 @@ const Login = () => {
                         touched={touched}
                         errors={errors}
                      />
+
+                     {errorMessage && (
+                        <div className="text-red-500 text-center my-2">
+                           {errorMessage}
+                        </div>
+                     )}
+
                      <div className="flex items-center justify-between">
                         <SubmitButton
                            isSubmitting={isSubmitting}
